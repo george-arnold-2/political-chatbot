@@ -28,8 +28,11 @@ export default function App() {
                     'A network error occurred, we apologize for the disturbance to the force';
 
                 // Remove leading digits + spaces (e.g., "429 ")
-                const cleanedError = rawError.replace('429', '');
-
+                let cleanedError = rawError
+                    .replace(/429/g, '')
+                    .replace('You', 'The developer')
+                    .replace('your', 'his')
+                    .replace('your plan and billing details', 'back later');
                 setResult({ error: cleanedError });
             } else {
                 setResult(data);
@@ -42,8 +45,11 @@ export default function App() {
                 'A network error occurred, we apologize for the disturbance to the force';
 
             // Remove leading digits + spaces (e.g., "429 ")
-            const cleanedError = rawError.replace('429', '');
-
+            let cleanedError = rawError
+                .replace(/429/g, '')
+                .replace('You', 'The developer')
+                .replace('your', 'his')
+                .replace('your plan and billing details', 'back later');
             setResult({ error: cleanedError });
         } finally {
             setLoading(false);
