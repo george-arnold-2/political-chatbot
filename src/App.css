@@ -83,6 +83,10 @@ img {
     border: 1px solid var(--error-border);
     color: var(--error-text);
     text-align: left;
+    padding: 1em;
+    border-radius: 1em;
+    margin-top: 2em;
+
 }
 
 
