@@ -4,12 +4,13 @@ export default function App() {
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState(null);
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '';
 
     async function handleAnalyze() {
         setLoading(true);
         setResult(null);
 
-        const res = await fetch('/api/analyze', {
+        const res = await fetch('${API_BASE_URL}//api/analyze', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ text: input }),
