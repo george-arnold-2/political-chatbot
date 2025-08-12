@@ -4,7 +4,8 @@ export default function App() {
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState(null);
-    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '';
+    //using correct vite syntax is important lol
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
     async function handleAnalyze() {
         setLoading(true);
