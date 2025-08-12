@@ -84,6 +84,12 @@ export default function App() {
             >
                 {loading ? 'Analyzing...' : 'Analyze'}
             </button>
+            {loading ? (
+                <div className="error">
+                    Due to use of free web service, Render.com, Requests may
+                    take up to a minute on the first try
+                </div>
+            ) : null}
 
             {result && (
                 <div className="results">
