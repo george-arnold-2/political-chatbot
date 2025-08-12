@@ -8,6 +8,11 @@
     text-align: center;
 }
 
+#root>div {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
 h3 {
     margin-top: 0;
 }
