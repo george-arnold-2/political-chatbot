@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import './App.css';
+import iconLogo from './assets/icon.svg';
 
 export default function App() {
     const [input, setInput] = useState('');
@@ -11,26 +13,57 @@ export default function App() {
         setLoading(true);
         setResult(null);
 
-        const res = await fetch('${API_BASE_URL}//api/analyze', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: input }),
-        });
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/analyze`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: input }),
+            });
 
-        const data = await res.json();
-        setResult(data);
-        setLoading(false);
+            const data = await res.json();
+
+            if (!res.ok) {
+                const rawError =
+                    data.error ||
+                    'A network error occurred, we apologize for the disturbance to the force';
+
+                // Remove leading digits + spaces (e.g., "429 ")
+                const cleanedError = rawError.replace('429', '');
+
+                setResult({ error: cleanedError });
+            } else {
+                setResult(data);
+            }
+        } catch (error) {
+            // Get the raw error message or fallback
+            console.log('ERROR UPDATE');
+            const rawError =
+                error.message ||
+                'A network error occurred, we apologize for the disturbance to the force';
+
+            // Remove leading digits + spaces (e.g., "429 ")
+            const cleanedError = rawError.replace('429', '');
+
+            setResult({ error: cleanedError });
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
-        <div
-            style={{
-                maxWidth: 600,
-                margin: '2rem auto',
-                fontFamily: 'sans-serif',
-            }}
-        >
+        <div>
             <h1>Political Argument Analyzer</h1>
+            <img src={iconLogo} alt="logo" />
+            <p>
+                Specialized to prompt OpenAI's ChatGPT to ensure reliability in
+                fact-driven responses, in an effort to minimalize the spread of
+                misinformation. Enter your prompt below, click "Analyze", and
+                get information about the claim made. It will also generate a
+                persuaisive rebuttal you can reply with. The rebuttal is
+                programmed to avoid the normal pitfalls of human arguements,
+                such as straw man arguements, Ad-Hominem attacks, slippery
+                slopes, and generalizations.
+            </p>
             <textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -47,17 +80,20 @@ export default function App() {
             </button>
 
             {result && (
-                <div
-                    style={{
-                        marginTop: '1rem',
-                        padding: '1rem',
-                        border: '1px solid #ccc',
-                    }}
-                >
-                    <h3>Fact Check:</h3>
-                    <p>{result.facts || 'No facts found'}</p>
-                    <h3>Suggested Response:</h3>
-                    <p>{result.rebuttal}</p>
+                <div className="results">
+                    {result.error ? (
+                        <div className="error">
+                            <h3>Error:</h3>
+                            <p>{result.error}</p>
+                        </div>
+                    ) : (
+                        <div className="success">
+                            <h3>Fact Check:</h3>
+                            <p>{result.facts || 'No facts found'}</p>
+                            <h3>Suggested Response:</h3>
+                            <p>{result.rebuttal}</p>
+                        </div>
+                    )}
                 </div>
             )}
         </div>
