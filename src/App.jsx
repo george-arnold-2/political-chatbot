@@ -1,35 +1,63 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+    const [input, setInput] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [result, setResult] = useState(null);
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    async function handleAnalyze() {
+        setLoading(true);
+        setResult(null);
+
+        const res = await fetch('/api/analyze', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: input }),
+        });
+
+        const data = await res.json();
+        setResult(data);
+        setLoading(false);
+    }
+
+    return (
+        <div
+            style={{
+                maxWidth: 600,
+                margin: '2rem auto',
+                fontFamily: 'sans-serif',
+            }}
+        >
+            <h1>Political Argument Analyzer</h1>
+            <textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                rows={5}
+                placeholder="Paste a political claim here..."
+                style={{ width: '100%', padding: '0.5rem' }}
+            />
+            <button
+                onClick={handleAnalyze}
+                style={{ marginTop: '0.5rem', padding: '0.5rem 1rem' }}
+                disabled={!input || loading}
+            >
+                {loading ? 'Analyzing...' : 'Analyze'}
+            </button>
+
+            {result && (
+                <div
+                    style={{
+                        marginTop: '1rem',
+                        padding: '1rem',
+                        border: '1px solid #ccc',
+                    }}
+                >
+                    <h3>Fact Check:</h3>
+                    <p>{result.facts || 'No facts found'}</p>
+                    <h3>Suggested Response:</h3>
+                    <p>{result.rebuttal}</p>
+                </div>
+            )}
+        </div>
+    );
 }
-
-export default App
